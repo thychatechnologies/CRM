@@ -1,0 +1,82 @@
+{% extends 'Dashboard/base.html' %}
+{% load static %}
+
+{% block page %} 
+    <li class="breadcrumb-item active" aria-current="page">Edit Team Member</li>
+{% endblock page %}
+
+{% block content %}
+
+<!-- BEGIN: Notification -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="intro-y col-span-11 alert alert-{{ message.tags }} alert-dismissible show flex items-center mb-6 mt-5 text-white" role="alert">
+            <span><i data-lucide="info" class="w-4 h-4 mr-2"></i></span>
+            <span>{{ message }}</span>
+            <button type="button" class="btn-close text-white" data-tw-dismiss="alert" aria-label="Close"> <i data-lucide="x" class="w-4 h-4"></i> </button>
+        </div>
+    {% endfor %}
+{% endif %}
+<!-- BEGIN: Notification -->
+
+<div class="intro-y box py-10 sm:py-20 mt-5">
+
+    <h2 class="text-primary" style=" font-size: 30px; font-weight: 500; text-align: center;">Edit Team Member</h2>
+    
+    <div class="px-3 sm:px-10 mt-10 pt-10 border-t border-slate-200/60 dark:border-darkmode-400">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="grid grid-cols-12 gap-4 gap-y-5 mt-5"> 
+                <div class="intro-y col-span-12 sm:col-span-4">
+                    <label for="input-wizard-2" class="form-label">Name</label>
+                    <input value="{{ member.first_name }}" name="name" type="text" class="form-control" placeholder="Enter Member Name Here" required maxlength="100">
+                </div>
+
+                <div class="intro-y col-span-12 sm:col-span-4">
+                    <label for="input-wizard-2" class="form-label">Staff ID</label>
+                    <input value="{{ member.Staff_ID }}" name="staff_id" type="text" class="form-control" readonly maxlength="25">
+                </div>
+
+                <div class="intro-y col-span-12 sm:col-span-4">
+                    <label for="input-wizard-2" class="form-label">Image</label>
+                    <input name="image" id="FilUploader" type="file" class="form-control file">
+                </div>
+
+                {% if user.is_superuser %}
+                <div class="intro-y col-span-12 sm:col-span-4">
+                    <label for="input-wizard-2" class="form-label">Select Department</label>
+                    <select name="department" id="" class="tom-select" required>
+                        <option value="">Select Department</option>
+                        <option value="{{ member.Department }}" selected>{{ member.Department }}</option>
+                        <option value="Thycha Creatives">Thycha Creatives</option>
+                        <option value="Thycha Technologies">Thycha Technologies</option>
+                        <option value="Thycha Academy">Thycha Academy</option>
+                    </select>
+                </div>
+                {% endif %}
+
+                <div class="intro-y col-span-12 sm:col-span-4">
+                    <label for="input-wizard-2" class="form-label">Job Role</label>
+                    <input value="{{ member.Job_Role }}" name="job-role" type="text" class="form-control" placeholder="Enter Member Job Role Here" required maxlength="65">
+                </div>
+
+                <div class="intro-y col-span-12 sm:col-span-4">
+                    <label for="input-wizard-2" class="form-label">Mobile</label>
+                    <input value="{{ member.Mobile }}" name="mobile" type="text" class="form-control" placeholder="Enter Member Mobile Number Here" required maxlength="15">
+                </div>
+
+                <div class="intro-y col-span-12 sm:col-span-4">
+                    <label for="input-wizard-2" class="form-label">Email</label>
+                    <input value="{{ member.email }}" name="email" type="email" class="form-control" placeholder="Enter Member Email Address Here" required>
+                </div>
+
+                <div class="intro-y col-span-12 flex items-center justify-center sm:justify-end mt-5">
+                    <button class="btn btn-primary w-24 ml-2" type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+{% endblock content %}
