@@ -30,6 +30,7 @@ urlpatterns = [
     path('',include('Team.urls')),
     path('',include('Clients.urls')),
     path('',include('Projects.urls')),
+    path('',include('Timesheet.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

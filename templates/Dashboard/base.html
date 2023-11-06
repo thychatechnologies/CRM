@@ -14,6 +14,7 @@
         {% endblock title %}
         <!-- BEGIN: CSS Assets-->
         <link rel="stylesheet" href="{% static 'dashboard/css/app.css' %}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <!-- END: CSS Assets-->
         <style>
             .file {
@@ -82,6 +83,30 @@
                             </ul>
                         </li>
                     {% endif %}
+
+                    {% if user.is_superuser or user.is_technology_head %}
+                        <li>
+                            <a href="javascript:;" class="menu">
+                                <div class="menu__icon"> <i data-lucide="clipboard"></i> </div>
+                                <div class="menu__title"> Projects <i data-lucide="chevron-down" class="menu__sub-icon "></i> </div>
+                            </a>
+                            <ul class="">
+                                <li>
+                                    <a href="" class="menu">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Manage Projects </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    <li>
+                        <a href="{% url 'timesheet' %}" class="menu menu--active">
+                            <div class="menu__icon"> <i data-lucide="slack"></i> </div>
+                            <div class="menu__title"> Time Sheet </div>
+                        </a>
+                    </li>
 
                     <li class="menu__devider my-6"></li>
                 </ul>
@@ -274,6 +299,42 @@
                             </ul>
                         </li>
                     {% endif %}
+
+                    {% if user.is_superuser or user.is_technology_head %}
+                        <li>
+                            <a href="javascript:;" class="side-menu {% if page == 'project' %} side-menu--active {% endif %}">
+                                <div class="side-menu__icon"> <i data-lucide="clipboard"></i> </div>
+                                <div class="side-menu__title">
+                                    Projects
+                                    <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                                </div>
+                            </a>
+                            <ul class="">
+                                <li>
+                                    <a href="" class="side-menu">
+                                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="side-menu__title"> Manage Projects </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    <li>
+                        <a href="{% url 'timesheet' %}" class="side-menu {% if page == 'timesheet' %} side-menu--active {% endif %}">
+                            <div class="side-menu__icon"> <i data-lucide="clock"></i> </div>
+                            <div class="side-menu__title"> Time Sheet </div>
+                        </a>
+                    </li>
+
+                    {% if request.user.is_staff %}
+                        <li>
+                            <a href="{% url 'approve-timesheet' %}" class="side-menu {% if page == 'approve-timesheet' %} side-menu--active {% endif %}">
+                                <div class="side-menu__icon"> <i data-lucide="clock"></i> </div>
+                                <div class="side-menu__title"> Approve Time Sheet </div>
+                            </a>
+                        </li>
+                    {% endif %}
                     
                     <li class="side-nav__devider my-6"></li>
                 </ul>
@@ -296,6 +357,8 @@
         <script src="https://cdn.ckeditor.com/ckeditor5/35.3.2/classic/ckeditor.js"></script>
         <script src="{% static 'dashboard/js/url.js' %}"></script>
         <script src="{% static 'dashboard/js/block.js' %}"></script>
+        <!-- <script src="{% static 'dashboard/js/timesheet.js' %}"></script> -->
+        <!-- <script src="{% static 'dashboard/js/filter.js' %}"></script> -->
 
         <!-- <script>
             ClassicEditor

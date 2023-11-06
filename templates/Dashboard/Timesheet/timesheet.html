@@ -1,0 +1,264 @@
+{% extends 'Dashboard/base.html' %}
+{% load static %}
+
+{% block page %} 
+    <li class="breadcrumb-item active" aria-current="page">Timesheet</li>
+{% endblock page %}
+
+{% block content %}
+<!-- BEGIN: Notification -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="intro-y col-span-11 alert alert-{{ message.tags }} alert-dismissible show flex items-center mb-6 mt-5 text-white" role="alert">
+            <span><i data-lucide="info" class="w-4 h-4 mr-2"></i></span>
+            <span>{{ message }}</span>
+            <button type="button" class="btn-close text-white" data-tw-dismiss="alert" aria-label="Close"> <i data-lucide="x" class="w-4 h-4"></i> </button>
+        </div>
+    {% endfor %}
+{% endif %}
+<!-- BEGIN: Notification -->
+
+<div class="grid grid-cols-12 gap-6">
+    <div class="col-span-12 2xl:col-span-9">
+        <div class="grid grid-cols-12 gap-6">
+            <!-- BEGIN: General Report -->
+            <div class="col-span-12 mt-8">
+                <div class="intro-y flex items-center h-10">
+                    <h2 class="text-lg font-medium truncate mr-5">
+                        Overview
+                    </h2>
+                    <a href="" class="ml-auto flex items-center text-primary"> <i data-lucide="refresh-ccw" class="w-4 h-4 mr-3"></i> Reload Data </a>
+                </div>
+                <div class="grid grid-cols-12 gap-6 mt-5">
+                    <div class="col-span-12 sm:col-span-6 xl:col-span-6 intro-y">
+                        <a href="">
+                            <div class="report-box zoom-in">
+                                <div class="box p-5">
+                                    <div class="text-base text-slate-500 mt-1">This month</div>
+                                    <p>
+                                        <span class="text-warning">Pending: {{ pending_month }}</span> | 
+                                        <span class="text-success">Aproved: {{ approved_month }}</span> | 
+                                        <span class="text-danger">Total: {{ rejected_month }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-span-12 sm:col-span-6 xl:col-span-6 intro-y">
+                        <a href="">
+                            <div class="report-box zoom-in">
+                                <div class="box p-5">
+                                    <div class="text-base text-slate-500 mt-1">Today</div>
+                                    <p>
+                                        <span class="text-warning">Pending: {{ pending }}</span> | 
+                                        <span class="text-success">Aproved: {{ approved }}</span> | 
+                                        <span class="text-danger">Total: {{ rejected }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- END: General Report -->
+            <!-- BEGIN: Weekly Top Products -->
+            <div class="col-span-12 mt-6">
+                <div class="intro-y block sm:flex items-center h-10 mb-5">
+                    <h2 class="text-lg font-medium truncate mr-5 flex justify-center">
+                        Add Time Sheet
+                    </h2>
+                    <!-- <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
+                        <button class="btn btn-primary shadow-md mr-2" id="add-time">Add Timesheet</button>
+                    </div> -->
+                </div>
+
+                <div class="intro-y box py-10 sm:py-10 mt-10 sm:mt-5 mb-5" id="form-div">
+                    <div class="px-3 sm:px-10">
+                        <form method="post" id="timesheet-form">
+                            {% csrf_token %}
+                            <div class="grid grid-cols-12 gap-4 gap-y-5"> 
+                                <div class="intro-y col-span-12 sm:col-span-3">
+                                    <label for="input-wizard-2" class="form-label">From Time</label>
+                                    <input name="start_time" id="from_time" type="time" class="form-control" required>
+                                </div>
+                
+                                <div class="intro-y col-span-12 sm:col-span-3">
+                                    <label for="input-wizard-2" class="form-label">To Time</label>
+                                    <input name="end_time" id="to_time" type="time" class="form-control" required>
+                                </div>
+
+                                <div class="intro-y col-span-12 sm:col-span-3">
+                                    <label for="input-wizard-2" class="form-label">Location</label>
+                                    <select name="location" id="location" class="form-control">
+                                        <option value="">Select Location</option>
+                                        <option value="Work from Office">Work from Office</option>
+                                        <option value="Work from Home">Work from Home</option>
+                                    </select>
+                                </div>
+
+                                <div class="intro-y col-span-12 sm:col-span-3">
+                                    <label for="input-wizard-2" class="form-label">Work Mode</label>
+                                    <select name="mode" id="mode" class="form-control">
+                                        <option value="">Select Work Mode</option>
+                                        <option value="New">New</option>
+                                        <option value="Edit">Edit</option>
+                                        <option value="Rework">Rework</option>
+                                    </select>
+                                </div>
+
+                                <div class="intro-y col-span-12 sm:col-span-3">
+                                    <label for="input-wizard-2" class="form-label">Work Type</label>
+                                    <select name="type" id="type" class="form-control">
+                                        <option value="">Select Work Type</option>
+                                        <option value="Poster">Poster</option>
+                                        <option value="Branding">Branding</option>
+                                        <option value="Video">Video</option>
+                                        <option value="Brochure">Brochure</option>
+                                        <option value="Packaging">Packaging</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="intro-y col-span-12 sm:col-span-3">
+                                    <label for="input-wizard-2" class="form-label">Project</label>
+                                    <select name="project" id="project" class="form-control">
+                                        <option value="">Select Project</option>
+                                        {% for project in projects %}
+                                            <option value="{{ project.id }}">{{ project }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="intro-y col-span-12 sm:col-span-6">
+                                    <label for="input-wizard-2" class="form-label">Remarks</label>
+                                    <textarea name="remarks" id="remarks" cols="30" rows="3" class="form-control" placeholder="Enter remarks here"></textarea>
+                                </div>
+                
+                                <div class="intro-y col-span-12 flex items-center justify-center sm:justify-end mt-5">
+                                    <button class="btn btn-primary w-24 ml-2" type="submit" id="add-timesheet">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                {% if timesheets %}
+                    <div class="intro-y col-span-12 overflow-auto 2xl:overflow-visible mt-3 pt-5">
+                        <table class="table table-report -mt-2">
+                            <thead>
+                                <tr>
+                                    <th class="text-center whitespace-nowrap">SL. NO.</th>
+                                    <th class="text-center whitespace-nowrap">PROJECT</th>
+                                    <th class="text-center whitespace-nowrap">DATE</th>
+                                    <th class="text-center whitespace-nowrap">REMARKS</th>
+                                    <th class="text-center whitespace-nowrap">STATUS</th>
+                                    <th class="text-center whitespace-nowrap">ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="response">
+                                {% for timesheet in timesheets %}
+                                    <tr class="intro-x">
+
+                                        <td class="text-center whitespace-nowrap">
+                                            {{ forloop.counter }}
+                                        </td>
+
+                                        <td class="text-center whitespace-nowrap">
+                                            <span class="text-warning">
+                                                {{ timesheet.Client }}
+                                            </span>
+                                            <br>
+                                            {{ timesheet.Location }} - {{ timesheet.Mode }}
+                                        </td>
+
+                                        <td class="text-center whitespace-nowrap">
+                                            {{ timesheet.Date | date:'d M Y' }}<br>
+                                            <span style="color: #5e72e4;">
+                                                {{ timesheet.Start_Time | time:"h:i A" }} to {{ timesheet.End_Time | time:"h:i A" }}
+                                            </span><br>
+                                            <span class="text-success">{{ timesheet.formatted_duration }}</span>
+                                        </td>
+
+                                        <td class="text-center whitespace-nowrap">
+                                            {{ timesheet.Remarks }} 
+                                        </td>
+
+                                        <td class="text-center whitespace-nowrap">
+                                            {% if timesheet.Status == 'Rejected' %}
+                                                <span class="text-danger">REJECTED</span>
+                                            {% elif timesheet.Status == 'Approved' %}
+                                                <span class="text-success">APPROVED</span>
+                                            {% else %}
+                                                <span class="text-warning">PENDING</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <td class="table-report__action">
+                                            <div class="flex justify-center items-center">
+                                                <a class="flex items-center text-primary whitespace-nowrap mr-5" href="" title="edit">
+                                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i> 
+                                                </a>
+                                                <a onclick="delete_timesheet('{{timesheet.id}}')" class="flex items-center text-danger whitespace-nowrap" href="javascript:;" data-tw-toggle="modal" data-tw-target="#delete-confirmation-modal" title="delete">
+                                                    <i data-lucide="trash" class="w-4 h-4 mr-1"></i> 
+                                                </a>
+                                            </div>
+                                        </td>
+                                        
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="intro-y col-span-12 overflow-auto 2xl:overflow-visible">
+                        <table class="table table-report -mt-2">
+                            <tbody>
+                                <tr class="intro-x width"> 
+                                    <td class=" width" style="width:100%;">
+                                        <i data-lucide="hard-drive" style="width:60px; height:60px; margin-left: auto; margin-right: auto; display: block; padding: 10px; border-radius: 50%;
+                                            background: #e8e4e4;" class="w-4 h-4 mr-2 text-primary">  
+                                        </i>
+                                    <div style="text-align: center;">No data available!</div>
+                                    </td>   
+                                </tr>    
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+            <!-- END: Weekly Top Products -->
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN: Delete Confirmation Modal -->
+<div id="delete-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{% url 'delete-timesheet' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="timesheet_id" id="timesheet_id">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+                    <div class="p-5 text-center">
+                        <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
+                        <div class="text-3xl mt-5">Are you sure?</div>
+                        <div class="text-slate-500 mt-2">Do you really want to delete these records? <br>This process cannot be undone.</div>
+                    </div>
+                    <div class="px-5 pb-8 text-center">
+                        <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button>
+                        <button type="submit" class="btn btn-danger w-24">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- END: Delete Confirmation Modal -->
+
+<script>
+    function delete_timesheet(timesheet_id){
+        $('#timesheet_id').val(timesheet_id)
+    }
+</script>
+
+{% endblock content %}
