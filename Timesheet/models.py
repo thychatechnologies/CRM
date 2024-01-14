@@ -1,6 +1,7 @@
 from django.db import models
 from U_Auth.models import User
 from Clients.models import Client
+from Tasks.models import Task
 from datetime import datetime
 
 # Create your models here.
@@ -8,6 +9,7 @@ STATUS = (
     ('Pending', 'Pending'),
     ('Rejected', 'Rejected'),
     ('Approved', 'Approved'),
+    ('Reviced', 'Reviced'),
 )
 
 LOCATION = (
@@ -42,7 +44,8 @@ class Time_Sheet(models.Model):
     Location = models.CharField(max_length=25,choices=LOCATION)
     Mode = models.CharField(max_length=100, choices=MODE)
     Type = models.CharField(max_length=100, choices=TYPE)
-    Client = models.ForeignKey(Client, on_delete=models.SET_NULL,null=True)   
+    Client = models.ForeignKey(Client, on_delete=models.SET_NULL,null=True)  
+    Task = models.ForeignKey(Task,on_delete=models.DO_NOTHING)
     Remarks = models.TextField()
     Duration = models.DurationField(null=True, blank=True)
 
@@ -66,3 +69,11 @@ class Time_Sheet(models.Model):
         hours, remainder = divmod(self.Duration.seconds, 3600)
         minutes, _ = divmod(remainder, 60)
         return f"{hours} hr and {minutes}m"
+    
+class Filter(models.Model):
+    Employee = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
+    From_Date = models.DateField(null=True)
+    To_Date = models.DateField(null=True)
+    Status = models.CharField(max_length=50,default='Pending')
+    Client = models.ForeignKey(Client,on_delete=models.SET_NULL,null=True)
+    Task = models.ForeignKey(Task,on_delete=models.SET_NULL,null=True)

@@ -23,46 +23,70 @@
 
     <div class="grid grid-cols-12 gap-6 mt-5">
 
-        <div class="col-span-12 flex flex-wrap justify-center gap-5">
+        <form method="post" class="col-span-12 flex flex-wrap justify-center gap-5">
+            {% csrf_token %}
             <div class="col-span-2">
                 <select name="member" id="member" class="form-control">
-                    <option value="">Filter by Team Member</option>
+                    {% if filter.Employee == None %}
+                        <option value="">Filter by Team Member</option>
+                    {% else %}
+                        <option value="{{ filter.Employee.id }}">{{ filter.Employee }}</option>
+                    {% endif %}
+
                     {% for member in members %}
                         <option value="{{ member.id }}">{{ member }}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <div class="col-span-2">
-                <select name="client" id="client" class="form-control">
-                    <option value="">Filter by Client</option>
+            <div class="col-span-12 sm:col-span-2">
+                <select name="client" id="project" class="form-control">
+                    {% if filter.Client == None %}
+                        <option value="">Filter by Client</option>
+                    {% else %}
+                        <option value="{{ filter.Client.id }}">{{ filter.Client }}</option>
+                    {% endif %}
+
                     {% for client in clients %}
                         <option value="{{ client.id }}">{{ client }}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <div class="col-span-2">
-                <select name="status" id="status" class="form-control">
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
+            <div class="col-span-12 sm:col-span-2">
+                <select name="task" id="task" class="form-control">
+                    {% if filter.Task %}
+                        <option value="{{ filter.Task.id }}">{{ filter.Task }}</option>
+                    {% else %}
+                        <option value="">Select Task</option>
+                    {% endif %}
                 </select>
             </div>
 
             <div class="col-span-2">
-                <input type="date" name="from_date" id="from_date" class="form-control">
+                <select name="status" id="status" class="form-control">
+                    <option value="{{ filter.Status }}">{{ filter.Status }}</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Reviced">Reviced</option>
+                </select>
             </div>
 
             <div class="col-span-2">
-                <input type="date" name="to_date" id="to_date" class="form-control">
+                <input value="{{ filter.From_Date | date:'Y-m-d' }}" type="date" name="from_date" id="from_date" class="form-control">
             </div>
 
             <div class="col-span-2">
-                <button type="reset" class="btn btn-primary">Reset Filter</button>
+                <input value="{{ filter.To_Date | date:'Y-m-d' }}" type="date" name="to_date" id="to_date" class="form-control">
             </div>
 
-        </div>
+            <div class="col-span-2">
+                <button type="submit" class="btn btn-primary">GET</button>
+            </div>
+            <a href="{% url 'reset-filter' %}" class="btn btn-primary"><i data-lucide="refresh-ccw" class="w-5 h-5"></i></a>
+
+        </form>
 
         <!-- BEGIN: Data List -->
         {% if timesheets %}
@@ -97,6 +121,8 @@
                                     </span>
                                     <br>
                                     {{ timesheet.Location }} - {{ timesheet.Mode }}
+                                    <br>
+                                    <span style="color: #5e72e4;">{{ timesheet.Task }}</span>
                                 </td>
 
                                 <td class="text-center whitespace-nowrap">
@@ -116,6 +142,8 @@
                                         <span class="text-danger">REJECTED</span>
                                     {% elif timesheet.Status == 'Approved' %}
                                         <span class="text-success">APPROVED</span>
+                                    {% elif timesheet.Status == 'Reviced' %}
+                                        <span class="text-warning">REVICED</span>
                                     {% else %}
                                         <span class="text-warning">PENDING</span>
                                     {% endif %}
@@ -123,16 +151,33 @@
 
                                 <td class="table-report__action">
                                     <div class="flex justify-center items-center">
-                                        <a onclick="approve('{{ timesheet.id }}')" class="flex items-center text-success whitespace-nowrap mr-5" 
-                                        title="approve" href="javascript:;" data-tw-toggle="modal" 
-                                        data-tw-target="#approve-confirmation-modal">
-                                            <i data-lucide="thumbs-up" class="w-4 h-4 mr-1 approve" data-id="{{timesheet.id}}"></i> 
-                                        </a>
-                                        <a onclick="reject('{{ timesheet.id }}')" class="flex items-center text-danger whitespace-nowrap mr-5" 
-                                            title="reject" href="javascript:;" data-tw-toggle="modal" 
-                                            data-tw-target="#delete-confirmation-modal">
-                                            <i data-lucide="thumbs-down" class="w-4 h-4 mr-1 reject" data-id="{{timesheet.id}}"></i> 
-                                        </a>
+                                        {% if timesheet.Status == 'Pending' or timesheet.Status == 'Reviced' %}
+                                            <a onclick="approve('{{ timesheet.id }}')" class="flex items-center text-success whitespace-nowrap mr-5" 
+                                            title="approve" href="javascript:;" data-tw-toggle="modal" 
+                                            data-tw-target="#approve-confirmation-modal">
+                                                <i data-lucide="thumbs-up" class="w-4 h-4 approve" data-id="{{timesheet.id}}"></i> 
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if timesheet.Status == 'Pending' %}
+                                            <a onclick="revice('{{ timesheet.id }}')" class="flex items-center text-warning whitespace-nowrap mr-5" 
+                                            title="revice" href="javascript:;" data-tw-toggle="modal" 
+                                            data-tw-target="#revice-confirmation-modal">
+                                                <i data-lucide="refresh-ccw" class="w-4 h-4 approve" data-id="{{timesheet.id}}"></i> 
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if timesheet.Status == 'Pending' or timesheet.Status == 'Reviced' %}
+                                            <a onclick="reject('{{ timesheet.id }}')" class="flex items-center text-danger whitespace-nowrap mr-5" 
+                                                title="reject" href="javascript:;" data-tw-toggle="modal" 
+                                                data-tw-target="#delete-confirmation-modal">
+                                                <i data-lucide="thumbs-down" class="w-4 h-4 reject" data-id="{{timesheet.id}}"></i> 
+                                            </a>
+                                        {% endif %}
+
+                                        {% if timesheet.Status == 'Approved' or timesheet.Status == 'Rejected' %}
+                                            <i data-lucide="refresh-ccw" class="w-4 h-4"></i>
+                                        {% endif %}
                                     </div>
                                 </td>
                                 
@@ -208,9 +253,36 @@
     </div>
     <!-- END: Approve Confirmation Modal -->
 
+    <!-- BEGIN: Revice Confirmation Modal -->
+    <div id="revice-confirmation-modal" class="modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="{% url 'revice' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="id" id="revice_id">
+                <div class="modal-content">
+                    <div class="modal-body p-0">
+                        <div class="p-5 text-center">
+                            <i data-lucide="refresh-ccw" class="w-16 h-16 text-warning mx-auto mt-3"></i>
+                            <div class="text-3xl mt-5">Are you sure?</div>
+                            <div class="text-slate-500 mt-2">Do you really want to revice these timesheet? <br>This process cannot be undone.</div>
+                        </div>
+                        <div class="px-5 pb-8 text-center">
+                            <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-24 mr-1">Cancel</button>
+                            <button type="submit" class="btn btn-warning w-24">Revice</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- END: Approve Confirmation Modal -->
     <script>
         function approve(timesheet_id){
             $('#approve_id').val(timesheet_id)
+        }
+
+        function revice(timesheet_id){
+            $('#revice_id').val(timesheet_id)
         }
 
         function reject(timesheet_id){

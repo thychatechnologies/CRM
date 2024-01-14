@@ -19,7 +19,7 @@
 <!-- BEGIN: Notification -->
 
 <div class="grid grid-cols-12 gap-6">
-    <div class="col-span-12 2xl:col-span-9">
+    <div class="col-span-12">
         <div class="grid grid-cols-12 gap-6">
             <!-- BEGIN: General Report -->
             <div class="col-span-12 mt-8">
@@ -106,7 +106,7 @@
                                     </select>
                                 </div>
 
-                                <div class="intro-y col-span-12 sm:col-span-3">
+                                <div class="intro-y col-span-12 sm:col-span-4">
                                     <label for="input-wizard-2" class="form-label">Work Type</label>
                                     <select name="type" id="type" class="form-control">
                                         <option value="">Select Work Type</option>
@@ -119,8 +119,8 @@
                                     </select>
                                 </div>
 
-                                <div class="intro-y col-span-12 sm:col-span-3">
-                                    <label for="input-wizard-2" class="form-label">Project</label>
+                                <div class="intro-y col-span-12 sm:col-span-4">
+                                    <label for="input-wizard-2" class="form-label">Client</label>
                                     <select name="project" id="project" class="form-control">
                                         <option value="">Select Project</option>
                                         {% for project in projects %}
@@ -129,7 +129,14 @@
                                     </select>
                                 </div>
 
-                                <div class="intro-y col-span-12 sm:col-span-6">
+                                <div class="intro-y col-span-12 sm:col-span-4">
+                                    <label for="input-wizard-2" class="form-label">Task</label>
+                                    <select name="task" id="task" class="form-control">
+                                        <option value="">Select Task</option>
+                                    </select>
+                                </div>
+
+                                <div class="intro-y col-span-12 sm:col-span-12">
                                     <label for="input-wizard-2" class="form-label">Remarks</label>
                                     <textarea name="remarks" id="remarks" cols="30" rows="3" class="form-control" placeholder="Enter remarks here"></textarea>
                                 </div>
@@ -169,6 +176,8 @@
                                             </span>
                                             <br>
                                             {{ timesheet.Location }} - {{ timesheet.Mode }}
+                                            <br>
+                                            <span style="color: #5e72e4;">{{ timesheet.Task }}</span>
                                         </td>
 
                                         <td class="text-center whitespace-nowrap">
@@ -188,6 +197,8 @@
                                                 <span class="text-danger">REJECTED</span>
                                             {% elif timesheet.Status == 'Approved' %}
                                                 <span class="text-success">APPROVED</span>
+                                            {% elif timesheet.Status == 'Reviced' %}
+                                                <span class="text-warning">REVICED</span>
                                             {% else %}
                                                 <span class="text-warning">PENDING</span>
                                             {% endif %}
@@ -195,9 +206,9 @@
 
                                         <td class="table-report__action">
                                             <div class="flex justify-center items-center">
-                                                <a class="flex items-center text-primary whitespace-nowrap mr-5" href="" title="edit">
+                                                <!-- <a class="flex items-center text-primary whitespace-nowrap mr-5" href="" title="edit">
                                                     <i data-lucide="edit" class="w-4 h-4 mr-1"></i> 
-                                                </a>
+                                                </a> -->
                                                 <a onclick="delete_timesheet('{{timesheet.id}}')" class="flex items-center text-danger whitespace-nowrap" href="javascript:;" data-tw-toggle="modal" data-tw-target="#delete-confirmation-modal" title="delete">
                                                     <i data-lucide="trash" class="w-4 h-4 mr-1"></i> 
                                                 </a>

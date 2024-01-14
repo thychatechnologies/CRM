@@ -47,10 +47,10 @@
                     <label for="input-wizard-2" class="form-label">Select Department</label>
                     <select name="department" id="" class="tom-select" required>
                         <option value="">Select Department</option>
-                        <option value="{{ member.Department }}" selected>{{ member.Department }}</option>
-                        <option value="Thycha Creatives">Thycha Creatives</option>
-                        <option value="Thycha Technologies">Thycha Technologies</option>
-                        <option value="Thycha Academy">Thycha Academy</option>
+                        <option value="{{ member.Department.id }}" selected>{{ member.Department }}</option>
+                        {% for department in departments %}
+                            <option value="{{ department.id }}">{{ department }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 {% endif %}

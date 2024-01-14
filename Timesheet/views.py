@@ -3,12 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from Clients.models import Client
-from Timesheet.models import Time_Sheet
+from Timesheet.models import Time_Sheet,Filter
 from datetime import datetime,time
 from django.db.models import Q, F, Sum
 from django.contrib import messages
 from U_Auth.models import User
 from django.core import serializers
+from Tasks.models import Task
 
 today = datetime.today()
 
@@ -22,7 +23,7 @@ def format_duration(duration):
 @login_required
 def timesheet(request):
 
-                                        #GET
+    #GET
 
     projects = Client.objects.all()
     timesheets = Time_Sheet.objects.filter(Added_By=request.user,Date=today).order_by('-id')
@@ -93,9 +94,13 @@ def timesheet(request):
         location = request.POST.get('location')
         mode = request.POST.get('mode')
         type = request.POST.get('type')
+        remarks = request.POST.get('remarks')
+
         project_id = request.POST.get('project')
         project = Client.objects.get(id=project_id)
-        remarks = request.POST.get('remarks')
+
+        task_id = request.POST.get('task')
+        task = Task.objects.get(id=task_id)
 
         start_time = str(start_time) + ":00"
         end_time = str(end_time) + ":00"
@@ -112,13 +117,13 @@ def timesheet(request):
 
         if start_overlapping.exists() or end_overlapping.exists():
 
-            # messages.warning(request,' invalid time slot cant add time sheet ...! ')
+            messages.warning(request,' invalid time slot cant add time sheet ...! ')
             return redirect('timesheet')
         
         else:
             Time_Sheet.objects.create(
                 Added_By=request.user,Date=today,Start_Time=start_time,End_Time=end_time,Location=location,
-                Mode=mode,Type=type,Client=project,Remarks=remarks
+                Mode=mode,Type=type,Client=project,Remarks=remarks,Task=task
             )
 
             messages.success(request,' time sheet added successfully ...! ')
@@ -139,6 +144,20 @@ def timesheet(request):
         'rejected_month' : rejected_month,
     }
     return render(request,'Dashboard/Timesheet/timesheet.html',context)
+
+@csrf_exempt
+def get_tasks(request):
+    client_id = request.POST.get('client_id')
+    client = Client.objects.get(id=client_id)
+
+    tasks = Task.objects.filter(Client=client)
+
+    tasks_data = [{
+        'id': task.id,
+        'title' : task.Title
+        } for task in tasks]
+    
+    return JsonResponse({'status':'success','tasks':tasks_data})
 
 @csrf_exempt
 def add_timesheet(request):
@@ -200,14 +219,53 @@ def delete_timesheet(request):
     
 @login_required
 def approve_timesheet(request):
-    timesheets = Time_Sheet.objects.filter(Status='Pending')
-    members = User.objects.filter(Department='Thycha Creatives')
+    date = today.date()
+    members = User.objects.all()
     clients = Client.objects.all().order_by('Name')
+
+    filter = Filter.objects.last()
+    timesheets = Time_Sheet.objects.filter(Status=filter.Status).filter(Date__gte=filter.From_Date).filter(Date__lte=filter.To_Date)
+
+    if filter.Employee:
+        timesheets = timesheets.filter(Added_By=filter.Employee)
+    
+    if filter.Client:
+        timesheets = timesheets.filter(Client=filter.Client)
+
+    if filter.Task:
+        timesheets = timesheets.filter(Task=filter.Task)
+
+    if request.method == 'POST':
+        member_id = request.POST.get('member')
+        task_id = request.POST.get('task')
+        client_id = request.POST.get('client')
+        filter.From_Date = request.POST.get('from_date')
+        filter.To_Date = request.POST.get('to_date')
+        filter.Status = request.POST.get('status')
+
+        if member_id:
+            member = User.objects.get(id=member_id)
+            filter.Employee = member
+
+        if client_id:
+            client = Client.objects.get(id=client_id)
+            filter.Client = client
+
+        if task_id:
+            task = Task.objects.get(id=task_id)
+            filter.Task = task
+
+        filter.save()
+
+        return redirect('approve-timesheet')
+    
     context = {
         'page' : 'approve-timesheet',
         'timesheets' : timesheets,
         'members' : members,
-        'clients' : clients
+        'clients' : clients,
+        'today' : today.date(),
+        'filter' : filter,
     }
     return render(request,'Dashboard/Timesheet/approve-timesheet.html',context)
 
@@ -232,6 +290,16 @@ def reject(request):
         return redirect('approve-timesheet')
     
 @csrf_exempt
+def revice(request):
+    if request.method == 'POST':
+        ts_id = request.POST.get('id')
+        timesheet = Time_Sheet.objects.get(id=ts_id)
+        timesheet.Status = 'Reviced'
+        timesheet.save()
+        # return JsonResponse({'status':'rejected'})
+        return redirect('approve-timesheet')
+    
+@csrf_exempt
 def filter_timesheet(request):
     timesheets = Time_Sheet.objects.filter(Status='Pending')
     timesheet_data = [{
@@ -248,3 +316,15 @@ def filter_timesheet(request):
         'Status' : timesheet.Status
         } for timesheet in timesheets]
     return JsonResponse({'status':'success','timesheets':timesheet_data})
+
+@login_required
+def reset_filter(request):
+    filter = Filter.objects.last()
+    filter.From_Date = today.date()
+    filter.To_Date = today.date()
+    filter.Employee = None
+    filter.Status = 'Pending'
+    filter.Client = None
+    filter.Task = None
+    filter.save()
+    return redirect('approve-timesheet')

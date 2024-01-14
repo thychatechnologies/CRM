@@ -27,10 +27,11 @@ urlpatterns = [
     path('',include('U_Auth.urls')),
     path('',include('ErrHandler.urls')),
     path('',include('Core.urls')),
-    path('',include('Team.urls')),
-    path('',include('Clients.urls')),
-    path('',include('Projects.urls')),
-    path('',include('Timesheet.urls')),
+    path('team/',include('Team.urls')),
+    path('client/',include('Clients.urls')),
+    path('project/',include('Projects.urls')),
+    path('timesheet/',include('Timesheet.urls')),
+    path('task/',include('Tasks.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

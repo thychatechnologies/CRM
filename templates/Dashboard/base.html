@@ -75,6 +75,12 @@
                             </a>
                             <ul class="">
                                 <li>
+                                    <a href="{% url 'add-client' %}" class="menu">
+                                        <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                        <div class="menu__title"> Add Client </div>
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="{% url 'manage-clients' %}" class="menu">
                                         <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                         <div class="menu__title"> Manage Clients </div>
@@ -83,9 +89,9 @@
                             </ul>
                         </li>
                     {% endif %}
-
-                    {% if user.is_superuser or user.is_technology_head %}
-                        <li>
+                    
+                    {% if user.is_staff %}
+                        <!-- <li>
                             <a href="javascript:;" class="menu">
                                 <div class="menu__icon"> <i data-lucide="clipboard"></i> </div>
                                 <div class="menu__title"> Projects <i data-lucide="chevron-down" class="menu__sub-icon "></i> </div>
@@ -98,15 +104,53 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> -->
                     {% endif %}
 
                     <li>
                         <a href="{% url 'timesheet' %}" class="menu menu--active">
-                            <div class="menu__icon"> <i data-lucide="slack"></i> </div>
+                            <div class="menu__icon"> <i data-lucide="clock"></i> </div>
                             <div class="menu__title"> Time Sheet </div>
                         </a>
                     </li>
+
+                    <li>
+                        <a href="javascript:;" class="menu">
+                            <div class="menu__icon"> <i data-lucide="check-circle"></i> </div>
+                            <div class="menu__title"> Tasks <i data-lucide="chevron-down" class="menu__sub-icon "></i> </div>
+                        </a>
+                        <ul class="">
+                            <li>
+                                <a href="" class="menu">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> My Tasks </div>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="" class="menu">
+                                    <div class="menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="menu__title"> Create New Task </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'timesheet' %}" class="menu menu--active">
+                            <div class="menu__icon"> <i data-lucide="file-text"></i> </div>
+                            <div class="menu__title"> Leave Requests </div>
+                        </a>
+                    </li>
+
+                    {% if user.is_staff %}
+                        <li>
+                            <a href="{% url 'approve-timesheet' %}" class="menu menu--active">
+                                <div class="menu__icon"> <i data-lucide="clock"></i> </div>
+                                <div class="menu__title"> Approve Time Sheet </div>
+                            </a>
+                        </li>
+                    {% endif %}
 
                     <li class="menu__devider my-6"></li>
                 </ul>
@@ -253,7 +297,7 @@
                             <div class="side-menu__title"> Dashboard </div>
                         </a>
                     </li>
-
+                    
                     {% if user.is_staff %}
                         <li>
                             <a href="javascript:;" class="side-menu {% if page == 'team' %} side-menu--active {% endif %}">
@@ -279,7 +323,7 @@
                             </ul>
                         </li>
                     {% endif %}
-
+                    
                     {% if user.is_staff %}
                         <li>
                             <a href="javascript:;" class="side-menu {% if page == 'clients' %} side-menu--active {% endif %}">
@@ -299,9 +343,9 @@
                             </ul>
                         </li>
                     {% endif %}
-
-                    {% if user.is_superuser or user.is_technology_head %}
-                        <li>
+                    
+                    {% if user.is_staff %}
+                        <!-- <li>
                             <a href="javascript:;" class="side-menu {% if page == 'project' %} side-menu--active {% endif %}">
                                 <div class="side-menu__icon"> <i data-lucide="clipboard"></i> </div>
                                 <div class="side-menu__title">
@@ -317,7 +361,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> -->
                     {% endif %}
 
                     <li>
@@ -327,7 +371,7 @@
                         </a>
                     </li>
 
-                    {% if request.user.is_staff %}
+                    {% if user.is_staff %}
                         <li>
                             <a href="{% url 'approve-timesheet' %}" class="side-menu {% if page == 'approve-timesheet' %} side-menu--active {% endif %}">
                                 <div class="side-menu__icon"> <i data-lucide="clock"></i> </div>
@@ -335,6 +379,38 @@
                             </a>
                         </li>
                     {% endif %}
+
+                    <li>
+                        <a href="javascript:;" class="side-menu {% if page == 'tasks' %} side-menu--active {% endif %}">
+                            <div class="side-menu__icon"> <i data-lucide="check-circle"></i> </div>
+                            <div class="side-menu__title">
+                                Tasks
+                                <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                            </div>
+                        </a>
+                        <ul class="">
+                            <li>
+                                <a href="{% url 'tasks' %}" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="side-menu__title"> My Tasks </div>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{% url 'create-task' %}" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                                    <div class="side-menu__title"> Create New Task </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'timesheet' %}" class="side-menu {% if page == 'leave' %} side-menu--active {% endif %}">
+                            <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
+                            <div class="side-menu__title"> Leave Requests </div>
+                        </a>
+                    </li>
                     
                     <li class="side-nav__devider my-6"></li>
                 </ul>
@@ -357,6 +433,12 @@
         <script src="https://cdn.ckeditor.com/ckeditor5/35.3.2/classic/ckeditor.js"></script>
         <script src="{% static 'dashboard/js/url.js' %}"></script>
         <script src="{% static 'dashboard/js/block.js' %}"></script>
+
+        <!-- CUSTOME JS START -->
+        <script src="{% static 'dashboard/js/custome/task.js' %}"></script>
+        <script src="{% static 'dashboard/js/custome/timesheet.js' %}"></script>
+        <!-- CUSTOME JS END -->
+
         <!-- <script src="{% static 'dashboard/js/timesheet.js' %}"></script> -->
         <!-- <script src="{% static 'dashboard/js/filter.js' %}"></script> -->
 

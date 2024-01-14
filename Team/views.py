@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required,user_passes_test
 from U_Auth.models import User
 from django.contrib import messages
+from Core.models import Companies
 
 # Create your views here.
 
@@ -9,6 +10,7 @@ from django.contrib import messages
 
 @user_passes_test(lambda u: u.is_staff)
 def add_team_member(request):
+    departments = Companies.objects.all()
 
     last_staff_id = User.objects.last()
 
@@ -22,13 +24,15 @@ def add_team_member(request):
         image = request.FILES.get('image')
 
         if request.user.is_superuser:
-            department = request.POST.get('department')
-        elif request.user.is_academy_head:
-            department = 'Thycha Academy'
+            department_id = request.POST.get('department')
+            department = Companies.objects.get(id=department_id)
+
         elif request.user.is_creatives_head:
-            department = 'Thycha Creatives'
+            department = Companies.objects.get(id=1)
         elif request.user.is_technology_head:
-            department = 'Thycha Technologies'
+            department = Companies.objects.get(id=2)
+        elif request.user.is_academy_head:
+            department = Companies.objects.get(id=3)
         
         job_role = request.POST.get('job-role')
         mobile = request.POST.get('mobile')
@@ -53,7 +57,8 @@ def add_team_member(request):
 
     context = {
         'page' : 'team',
-        'staff_id' : staff_id
+        'staff_id' : staff_id,
+        'departments' : departments
     }
     return render(request,'Dashboard/Team/add-team-member.html',context)
 
@@ -88,6 +93,7 @@ def manage_team(request):
 
 @user_passes_test(lambda u: u.is_staff)
 def edit_team_member(request,staff_id):
+    departments = Companies.objects.all()
     member = User.objects.get(id=staff_id)
 
     if request.method == 'POST':
@@ -96,7 +102,9 @@ def edit_team_member(request,staff_id):
                 member.Image = request.FILES.get('image')
 
             if request.user.is_superuser:
-                member.Department = request.POST.get('department')
+                department_id = request.POST.get('department')
+                department = Companies.objects.get(id=department_id)
+                member.Department = department
                 
             member.first_name = request.POST.get('name')
             member.Job_Role = request.POST.get('job-role')
@@ -113,7 +121,8 @@ def edit_team_member(request,staff_id):
 
     context = {
         'page' : 'team',
-        'member' : member
+        'member' : member,
+        'departments' : departments
     }
     return render(request,'Dashboard/Team/edit-team-member.html',context)
 
