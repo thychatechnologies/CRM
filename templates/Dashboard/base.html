@@ -121,14 +121,14 @@
                         </a>
                         <ul class="">
                             <li>
-                                <a href="" class="menu">
+                                <a href="{% url 'tasks' %}" class="menu">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                     <div class="menu__title"> My Tasks </div>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="" class="menu">
+                                <a href="{% url 'create-task' %}" class="menu">
                                     <div class="menu__icon"> <i data-lucide="activity"></i> </div>
                                     <div class="menu__title"> Create New Task </div>
                                 </a>
@@ -157,12 +157,13 @@
             </div>
         </div>
         <!-- END: Mobile Menu -->
+
         <!-- BEGIN: Top Bar -->
         <div class="top-bar-boxed h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt-12 md:mt-0 -mx-3 sm:-mx-8 md:-mx-0 px-3 md:border-b-0 relative md:fixed md:inset-x-0 md:top-0 sm:px-8 md:px-10 md:pt-10 md:bg-gradient-to-b md:from-slate-100 md:to-transparent dark:md:from-darkmode-700">
             <div class="h-full flex items-center">
                 <!-- BEGIN: Logo -->
                 <a href="" class="logo -intro-x hidden md:flex xl:w-[180px] block">
-                    <img alt="Midone - HTML Admin Template" class="logo__image" style="width: 80px; margin-left: 50px;" src="{% static 'dashboard/images/logo.png' %}">
+                    <img alt="" class="logo__image" style="width: 80px; margin-left: 50px;" src="{% static 'dashboard/images/logo.png' %}">
                     <!-- <span class="logo__text text-white text-lg ml-3"> Admin Dashboard </span>  -->
                 </a>
                 <!-- END: Logo -->
@@ -204,7 +205,7 @@
                             <div class="mb-5">
                                 <a href="" class="flex items-center mt-2">
                                     <div class="w-8 h-8 image-fit">
-                                        <img alt="Midone - HTML Admin Template" class="rounded-full" src="{% static 'dashboard/images/profile-3.jpg' %}">
+                                        <img alt="" class="rounded-full" src="{% static 'dashboard/images/profile.jpg' %}">
                                     </div>
                                     <div class="ml-3">Al Pacino</div>
                                     <div class="ml-auto w-48 truncate text-slate-500 text-xs text-right">alpacino@left4code.com</div>
@@ -213,7 +214,7 @@
                             <div class="search-result__content__title">Products</div>
                             <a href="" class="flex items-center mt-2">
                                 <div class="w-8 h-8 image-fit">
-                                    <img alt="Midone - HTML Admin Template" class="rounded-full" src="{% static 'dashboard/images/preview-4.jpg' %}">
+                                    <img alt="" class="rounded-full" src="{% static 'dashboard/images/preview.jpg' %}">
                                 </div>
                                 <div class="ml-3">Sony A7 III</div>
                                 <div class="ml-auto w-48 truncate text-slate-500 text-xs text-right">Photography</div>
@@ -230,7 +231,7 @@
                             <div class="notification-content__title">Notifications</div>
                             <div class="cursor-pointer relative flex items-center ">
                                 <div class="w-12 h-12 flex-none image-fit mr-1">
-                                    <img alt="Midone - HTML Admin Template" class="rounded-full" src="{% static 'dashboard/images/profile-3.jpg' %}">
+                                    <img alt="" class="rounded-full" src="{% static 'dashboard/images/profile.jpg' %}">
                                     <div class="w-3 h-3 bg-success absolute right-0 bottom-0 rounded-full border-2 border-white"></div>
                                 </div>
                                 <div class="ml-2 overflow-hidden">
@@ -248,7 +249,11 @@
                 <!-- BEGIN: Account Menu -->
                 <div class="intro-x dropdown w-8 h-8">
                     <div class="dropdown-toggle w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in scale-110" role="button" aria-expanded="false" data-tw-toggle="dropdown">
-                        <img alt="Midone - HTML Admin Template" src="{% static 'dashboard/images/profile-6.jpg' %}">
+                        {% if user.Image %}
+                            <img alt="" src="{{ user.Image.url }}">
+                        {% else %}
+                            <img alt="" src="{% static 'dashboard/images/profile.jpg' %}">
+                        {% endif %}
                     </div>
                     <div class="dropdown-menu w-56">
                         <ul class="dropdown-content bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
