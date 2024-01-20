@@ -114,6 +114,22 @@
                         </a>
                     </li>
 
+                    {% if user.is_staff %}
+                        <li>
+                            <a href="{% url 'approve-timesheet' %}" class="menu menu--active">
+                                <div class="menu__icon"> <i data-lucide="clock"></i> </div>
+                                <div class="menu__title"> Approve Time Sheet </div>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <li>
+                        <a href="{% url 'todo' %}" class="menu menu--active">
+                            <div class="menu__icon"> <i data-lucide="check-circle"></i> </div>
+                            <div class="menu__title"> To Do </div>
+                        </a>
+                    </li>
+
                     <li>
                         <a href="javascript:;" class="menu">
                             <div class="menu__icon"> <i data-lucide="check-circle"></i> </div>
@@ -142,15 +158,6 @@
                             <div class="menu__title"> Leave Requests </div>
                         </a>
                     </li>
-
-                    {% if user.is_staff %}
-                        <li>
-                            <a href="{% url 'approve-timesheet' %}" class="menu menu--active">
-                                <div class="menu__icon"> <i data-lucide="clock"></i> </div>
-                                <div class="menu__title"> Approve Time Sheet </div>
-                            </a>
-                        </li>
-                    {% endif %}
 
                     <li class="menu__devider my-6"></li>
                 </ul>
@@ -277,6 +284,9 @@
                                 <hr class="dropdown-divider border-white/[0.08]">
                             </li>
                             <li>
+                                <a href="{% url 'edit-profile' %}" class="dropdown-item hover:bg-white/5"> <i data-lucide="user" class="w-4 h-4 mr-2"></i> Profile </a>
+                            </li>
+                            <li>
                                 <a href="{% url 'change-password' %}" class="dropdown-item hover:bg-white/5"> <i data-lucide="lock" class="w-4 h-4 mr-2"></i> Reset Password </a>
                             </li>
                             <li>
@@ -384,6 +394,13 @@
                             </a>
                         </li>
                     {% endif %}
+
+                    <li>
+                        <a href="{% url 'todo' %}" class="side-menu {% if page == 'todo' %} side-menu--active {% endif %}">
+                            <div class="side-menu__icon"> <i data-lucide="check-circle"></i> </div>
+                            <div class="side-menu__title"> To Do </div>
+                        </a>
+                    </li>
 
                     <li>
                         <a href="javascript:;" class="side-menu {% if page == 'tasks' %} side-menu--active {% endif %}">

@@ -32,6 +32,7 @@ urlpatterns = [
     path('project/',include('Projects.urls')),
     path('timesheet/',include('Timesheet.urls')),
     path('task/',include('Tasks.urls')),
+    path('todo/',include('ToDo.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

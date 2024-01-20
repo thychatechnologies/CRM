@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'Projects',
     'Timesheet',
     'Tasks',
+    'ToDo',
 ]
 
 MIDDLEWARE = [

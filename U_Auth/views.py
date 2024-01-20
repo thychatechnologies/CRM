@@ -21,6 +21,24 @@ def sign_in(request):
             return redirect('.')
     return render(request,'Dashboard/Auth/sign-in.html')
 
+#------------------------------------------------- EDIT PROFILE --------------------------------------------------#
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        if len(request.FILES) > 0:
+            request.user.Image = request.FILES.get('image')
+        request.user.first_name = request.POST.get('name')
+        request.user.Mobile = request.POST.get('mobile')
+        request.user.email = request.POST.get('email')
+
+        request.user.save()
+
+        messages.success(request,'Profile updated successfully ... !')
+        return redirect('edit-profile')
+    return render(request,'Dashboard/Auth/profile.html')
+
+
 #----------------------------------------------CHANGE PASSWORD -----------------------------------------------#
 
 @login_required
