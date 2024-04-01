@@ -29,6 +29,7 @@ def edit_profile(request):
         if len(request.FILES) > 0:
             request.user.Image = request.FILES.get('image')
         request.user.first_name = request.POST.get('name')
+        request.user.username = request.POST.get('username')
         request.user.Mobile = request.POST.get('mobile')
         request.user.email = request.POST.get('email')
 

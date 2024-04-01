@@ -37,10 +37,11 @@ def add_team_member(request):
         job_role = request.POST.get('job-role')
         mobile = request.POST.get('mobile')
         email = request.POST.get('email')
+        username = request.POST.get('username')
         password = request.POST.get('password')
 
         try:
-            user = User.objects.create(first_name=name,username=staff_id,Image=image,Department=department,
+            user = User.objects.create(first_name=name,username=username,Image=image,Department=department,
                                 Job_Role=job_role,Mobile=mobile,email=email,Staff_ID=staff_id)
 
             user.save()
