@@ -67,6 +67,8 @@
                                 <td class="text-center flex justify-center whitespace-nowrap">
                                     {% if member.Image %}
                                         <img src="{{ member.Image.url }}" alt="" class="w-10 h-10 rounded">
+                                    {% else %}
+                                        <img src="{% static 'dashboard/images/profile.jpg' %}" alt="" class="w-10 h-10 rounded">
                                     {% endif %}
                                 </td>
 
